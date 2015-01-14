@@ -1,4 +1,26 @@
 <?php
+
+/**
+ * EasyCsv is a php utility that provides simple csv file manipulation methods
+ * including reading writing and searching csv file. internally treating the csv file
+ * as a 2D array. 
+ * 
+ * @author nblackwe https://people.ok.ubc.ca/nblackwe
+ * @license MIT
+ *
+ * @tutorial
+ * 
+ * $csv=EasyCsv::OpenCSV($filename); //you can now use EasyCsv methods with $csv.
+ * 
+ * //get dimensions.
+ * $height=EasyCsv::CountRows($csv);
+ * $width=EasyCsv::CountColumns($csv);
+ * 
+ * 
+ * 
+ *
+ */
+
 class EasyCsv{
 
 		
@@ -139,6 +161,12 @@ class EasyCsv{
 		return $csv['header'];
 	}
 	
+	/**
+	 * 
+	 * @param array $csv as returned by OpenCSV or CreateCSV
+	 * @param int $index row number starting at 0, not including header if it exists
+	 * @return NULL
+	 */
 	public static function GetRow($csv, $index){
 		$row=$csv['rows'][$index];
 		return EasyCsv::_pad($row, $csv['header']);
@@ -148,6 +176,7 @@ class EasyCsv{
 		while(count($row)<count($header)){$row[]=null;}
 		return $row;
 	}
+
 
 	public static function ColumnIndexOf($csv, $fieldName){
 		foreach($csv['header'] as $i=>$field){
