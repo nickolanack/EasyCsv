@@ -1,0 +1,13 @@
+{
+    "name": "nickolanack/easycsv",
+    "description": "simple csv reader writer",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nick Blackwell",
+            "email": "nickblackwell82@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
