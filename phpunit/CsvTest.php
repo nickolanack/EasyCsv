@@ -5,7 +5,7 @@ class CsvTest extends PHPUnit_Framework_TestCase {
     /**
      * @runInSeparateProcess
      */
-    public function writeIncludehelper() {
+    public function testCreateCsv() {
 
         include_once dirname(__DIR__) . '/easycsv/EasyCsv.php';
         $csv = EasyCsv::CreateCSV(array(
