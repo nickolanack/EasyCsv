@@ -30,8 +30,10 @@ class CsvTest extends PHPUnit_Framework_TestCase {
         ));
         
         $this->assertEquals(3, EasyCsv::CountRows($csv));
-        $this->assertEquals('5', EasyCsv::GetRow_Assoc($csv, 1)['two']);
-        $this->assertEquals('5', EasyCsv::GetRow($csv, 1)[1]);
+        $row = EasyCsv::GetRow_Assoc($csv, 1);
+        $this->assertEquals('5', $row['two']);
+        $row = EasyCsv::GetRow($csv, 1);
+        $this->assertEquals('5', $row[1]);
         
         $asserts = array();
         EasyCsv::IterateRows_Assoc($csv, 
