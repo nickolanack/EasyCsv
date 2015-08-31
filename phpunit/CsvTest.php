@@ -74,5 +74,7 @@ class CsvTest extends PHPUnit_Framework_TestCase {
         foreach ($asserts as $assert) {
             $this->assertEquals($assert[0], $assert[1]);
         }
+        
+        // file_put_contents(__DIR__.'/test.csv', EasyCsv::Write($csv));
     }
 }
