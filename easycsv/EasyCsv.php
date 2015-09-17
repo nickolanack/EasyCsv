@@ -19,7 +19,6 @@
 class EasyCsv {
 
     public static function OpenCsv($filename, $options = array()) {
-
         $default = array(
             'hasHeader' => true,
             'length' => 0
@@ -70,7 +69,6 @@ class EasyCsv {
     }
 
     public static function CreateCSV($header = false) {
-
         $csv = array(
             'rows' => array()
         );
@@ -81,12 +79,10 @@ class EasyCsv {
     }
 
     public static function AddRow(&$csv, $row) {
-
         $csv['rows'][] = $row;
     }
 
     public static function Write($csv) {
-
         return EasyCsv::_str_putcsv($csv);
     }
 
@@ -106,7 +102,6 @@ class EasyCsv {
     }
 
     public static function GetFieldNames($csvOrFilename, $csvMetdata = false) {
-
         $csv = $csvOrFilename;
         
         if (is_array($csv)) {
@@ -143,12 +138,10 @@ class EasyCsv {
     }
 
     public static function CountRows($csv) {
-
         return count($csv['rows']);
     }
 
     public static function CountColumns($csv) {
-
         if ($csv['length'] > 0) {
             return $csv['length'];
         }
@@ -156,7 +149,6 @@ class EasyCsv {
     }
 
     public static function GetHeader($csv) {
-
         return $csv['header'];
     }
 
@@ -169,13 +161,11 @@ class EasyCsv {
      * @return NULL
      */
     public static function GetRow($csv, $index) {
-
         $row = $csv['rows'][$index];
         return EasyCsv::_pad($row, $csv['header']);
     }
 
     private static function _pad($row, $header) {
-
         while (count($row) < count($header)) {
             $row[] = null;
         }
@@ -183,13 +173,12 @@ class EasyCsv {
     }
 
     public static function ColumnIndexOf($csv, $fieldName) {
-
         foreach ($csv['header'] as $i => $field) {
             if ($field == $fieldName) {
                 return $i;
             }
         }
-        return -1;
+        return - 1;
     }
 
     /**
@@ -203,14 +192,12 @@ class EasyCsv {
      * @return array an string indexed array
      */
     public static function GetRow_Assoc($csv, $index, $fieldNames = false) {
-
-        if (!$fieldNames)
+        if (! $fieldNames)
             $fieldNames = $csv['header'];
         return EasyCsv::_combine($fieldNames, EasyCsv::GetRow($csv, $index));
     }
 
     private static function _combine($header, $row) {
-
         while (count($row) < count($header)) {
             $row[] = null;
         }
@@ -223,12 +210,11 @@ class EasyCsv {
     }
 
     public static function GetMatchingRowKeys($csv, $match, $fieldNames = false) {
-
-        if (!$fieldNames)
+        if (! $fieldNames)
             $fieldNames = $csv['header'];
         $keys = array();
         
-        if ((!key_exists('rows', $csv)) || (!is_array($csv['rows'])))
+        if ((! key_exists('rows', $csv)) || (! is_array($csv['rows'])))
             throw new Exception('Invalid $csv[\'rows\']');
         
         foreach ($csv['rows'] as $index => $row) {
@@ -248,7 +234,6 @@ class EasyCsv {
     }
 
     public static function IterateRows($csv, $callback) {
-
         for ($i = 0; $i < EasyCsv::CountRows($csv); $i ++) {
             
             $continue = $callback(EasyCsv::GetRow($csv, $i), $i);
@@ -258,12 +243,64 @@ class EasyCsv {
     }
 
     public static function IterateRows_Assoc($csv, $callback) {
-
         for ($i = 0; $i < EasyCsv::CountRows($csv); $i ++) {
             
             $continue = $callback(EasyCsv::GetRow_Assoc($csv, $i), $i);
             if ($continue === false)
                 break;
         }
+    }
+
+    /**
+     *
+     * @param array $csv
+     *            an array created by EasyCsv::OpenCsv or EasyCsv:CreateCsv
+     * @param string $fieldName            
+     * @throws Exception on invalid field
+     * @return array of distinct values
+     */
+    public static function DistinctValues($csv, $fieldName) {
+        $values = array();
+        $i = array_search($fieldName, self::GetHeader($csv));
+        if ($i === false) {
+            throw new Exception('Invalid Field: ' . $fieldName);
+        }
+        self::IterateRows($csv, 
+            function ($row) use(&$values, $i) {
+                
+                if (! in_array($row[$i], $values)) {
+                    $values[] = $row[$i];
+                }
+            });
+        
+        return $values;
+    }
+
+    /**
+     *
+     * @param array $csv
+     *            an array created by EasyCsv::OpenCsv or EasyCsv:CreateCsv
+     * @param string $fieldName            
+     * @throws Exception on invalid field
+     * @return boolean true if all values in column are unique;
+     */
+    public static function AreAllValuesUnique($csv, $fieldName) {
+        $values = array();
+        $i = array_search($fieldName, self::GetHeader($csv));
+        if ($i === false) {
+            throw new Exception('Invalid Field: ' . $fieldName);
+        }
+        $result = true;
+        self::IterateRows($csv, 
+            function ($row) use(&$values, $i, &$result) {
+                
+                if (! in_array($row[$i], $values)) {
+                    $values[] = $row[$i];
+                } else {
+                    $result = false;
+                }
+            });
+        
+        return $result;
     }
 }
