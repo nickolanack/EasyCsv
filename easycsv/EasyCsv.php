@@ -18,7 +18,40 @@
  */
 class EasyCsv {
 
-    public static function OpenCsv($filename, $options = array()) {
+      public static function OpenCsv($filename, $options = array()) {
+
+        $bac_ = ini_get('auto_detect_line_endings');
+        ini_set('auto_detect_line_endings', true);
+       
+        $handle = fopen($filename, 'r');
+
+        if (!$handle ) {
+            throw new Exception('Invalid File, or Failed to read');
+        }
+        $csv=self::_OpenCsvStream($handle);
+        fclose($handle);
+        ini_set('auto_detect_line_endings', $bac_);
+
+        return $csv;
+
+    }
+
+        public static function ReadCsv($text, $options=array()){
+       
+       $bac_ = ini_get('auto_detect_line_endings');
+        ini_set('auto_detect_line_endings', true);
+     
+        $handle = fopen('data://text/plain,' . $text,'r');
+        $csv=self::_OpenCsvStream($handle);
+        fclose($handle);
+        ini_set('auto_detect_line_endings', $bac_);
+
+        return $csv;
+
+    }
+
+
+    public static function _OpenCsvStream($handle, $options = array()) {
         $default = array(
             'hasHeader' => true,
             'length' => 0
@@ -32,20 +65,18 @@ class EasyCsv {
         if (key_exists('hasHeader', $csv) && $csv['hasHeader']) {
             $csv['header'] = array();
         }
-        $bac_ = ini_get('auto_detect_line_endings');
-        ini_set('auto_detect_line_endings', TRUE);
-        $handle = fopen($filename, "r");
+       
         // stream_encoding($handle, $csv['encoding']);
         
-        if ($handle !== false) {
+        
             $c = 0;
-            while (($data = fgetcsv($handle, 0, ",")) !== false) {
-                
+            while (($data = fgetcsv($handle, 0, ',')) !== false) {
                 if (key_exists('header', $csv) && count($csv['header']) == 0) {
                     $c ++;
                     $csv['header'] = $data;
-                    if ($csv['length'] == 0)
+                    if ($csv['length'] == 0) {
                         $csv['length'] = count($data);
+                    }
                 } else {
                     $c ++;
                     $csv['rows'][] = $data;
@@ -56,15 +87,11 @@ class EasyCsv {
                     }
                 }
             }
-            fclose($handle);
-            ini_set('auto_detect_line_endings', $bac_);
+            
             if ($c <= 0) {
                 throw new Exception('0 rows in document');
             }
-        } else {
-            ini_set('auto_detect_line_endings', $bac_);
-            throw new Exception('Invalid File, or Failed to read');
-        }
+       
         return $csv;
     }
 
