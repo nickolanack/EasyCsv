@@ -95,7 +95,7 @@ class EasyCsv {
         return $csv;
     }
 
-    public static function CreateCSV($header = false) {
+    public static function CreateCsv($header = false) {
         $csv = array(
             'rows' => array()
         );
