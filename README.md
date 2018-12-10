@@ -1,3 +1,5 @@
+Deprecated
+
 # EasyCsv
 CSV Tools to make it easy to read write and search csv files using php
 
